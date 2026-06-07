@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Ghouldle Design System ─────────────────────────────── */
+:root {
+  --bg: #080808;
+  --surface: #111111;
+  --surface-2: #161616;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.14);
+
+  --correct-bg: #F5F5F5;
+  --correct-text: #080808;
+
+  --partial-bg: rgba(193, 18, 31, 0.18);
+  --partial-border: rgba(193, 18, 31, 0.55);
+  --partial-text: #E63946;
+
+  --wrong-bg: #111111;
+  --wrong-border: rgba(255, 255, 255, 0.06);
+  --wrong-text: #3a3a3a;
+
+  --accent: #C1121F;
+  --accent-glow: rgba(193, 18, 31, 0.35);
+
+  --text-primary: #F5F5F5;
+  --text-muted: #4a4a4a;
+  --text-subtle: #2a2a2a;
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--bg);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
+}
+
+::selection {
+  background: var(--accent-glow);
+  color: #fff;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 2px;
+}
+
+/* ── Keyframes ──────────────────────────────────────────── */
+@keyframes flip-in {
+  0% {
+    transform: rotateX(-90deg);
+    opacity: 0;
+  }
+
+  60% {
+    transform: rotateX(8deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes row-slide-up {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--accent-glow);
+  }
+
+  50% {
+    box-shadow: 0 0 16px 4px var(--accent-glow);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* ── Utilities ──────────────────────────────────────────── */
+.animate-flip-in {
+  animation: flip-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.2s ease both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease both;
+}
+
+.font-display {
+  font-family: var(--font-bebas), 'Arial Black', sans-serif;
+}
+
+.font-body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* ── Skeleton shimmer ───────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg,
+      var(--surface) 25%,
+      var(--surface-2) 50%,
+      var(--surface) 75%);
+  background-size: 200% auto;
+  animation: shimmer 1.5s linear infinite;
+}
