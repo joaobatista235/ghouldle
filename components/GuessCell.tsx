@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { GuessResult } from "@/types";
 
 interface Props {
@@ -39,13 +39,18 @@ export default function GuessCell({
   const [revealed, setRevealed] = useState(false);
   const style = STYLES[result];
 
+  // Use effect to trigger animation after delay
   useEffect(() => {
     const t = setTimeout(() => setRevealed(true), delay);
     return () => clearTimeout(t);
   }, [delay]);
 
+  // Generate a unique key to ensure consistent rendering
+  const animationKey = useMemo(() => `${value}-${result}-${delay}`, [value, result, delay]);
+
   return (
     <div
+      key={animationKey}
       style={{
         position: "relative",
         display: "flex",

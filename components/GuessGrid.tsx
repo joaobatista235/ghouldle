@@ -27,7 +27,7 @@ export default function GuessGrid() {
 
   return (
     <div style={{ overflowX: "auto", paddingBottom: "8px" }}>
-      <div style={{ minWidth: "520px" }}>
+      <div style={{ minWidth: "min(100%, 520px)" }}>
         {guesses.map((guess, rowIdx) => (
           <div
             key={rowIdx}

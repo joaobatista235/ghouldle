@@ -21,6 +21,7 @@ export default function ColumnHeaders() {
         gap: "6px",
         marginBottom: "6px",
         marginTop: "8px",
+        minWidth: "min(100%, 520px)",
       }}
     >
       {COLUMNS.map((col) => (
@@ -36,6 +37,7 @@ export default function ColumnHeaders() {
             color: "var(--text-muted)",
           }}
         >
+          {/* Full labels on screens >= 640px, abbreviated on smaller screens */}
           <span className="hidden sm:inline">{col.label}</span>
           <span className="sm:hidden">{col.abbr}</span>
         </div>

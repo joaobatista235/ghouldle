@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useGameStore } from "@/store/gameStore";
 import { Character } from "@/types";
 
@@ -11,12 +11,37 @@ export default function SearchInput() {
   const submitGuess      = useGameStore((s) => s.submitGuess);
   const clearSuggestions = useGameStore((s) => s.clearSuggestions);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
+  // Reset selected index when suggestions change
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [suggestions]);
+
   function handleSelect(char: Character) {
     submitGuess(char);
+    setSelectedIndex(-1);
     setTimeout(() => inputRef.current?.focus(), 50);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Escape") {
+      clearSuggestions();
+      setSelectedIndex(-1);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
+    } else if (e.key === "Enter" && selectedIndex >= 0) {
+      e.preventDefault();
+      handleSelect(suggestions[selectedIndex]);
+    }
   }
 
   return (
@@ -60,9 +85,12 @@ export default function SearchInput() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Digite o nome de um personagem..."
           autoComplete="off"
-          onKeyDown={(e) => { if (e.key === "Escape") clearSuggestions(); }}
+          aria-label="Buscar personagem de Tokyo Ghoul"
+          aria-controls="search-dropdown"
+          aria-expanded={suggestions.length > 0}
           style={{
             flex: 1,
             background: "transparent",
@@ -79,7 +107,12 @@ export default function SearchInput() {
         {input && (
           <button
             id="search-clear"
-            onClick={clearSuggestions}
+            onClick={(e) => {
+              e.stopPropagation();
+              clearSuggestions();
+              setSelectedIndex(-1);
+            }}
+            aria-label="Limpar busca"
             style={{
               padding: "0 18px",
               height: "100%",
@@ -105,6 +138,7 @@ export default function SearchInput() {
         <div
           id="search-dropdown"
           className="animate-slide-down"
+          role="listbox"
           style={{
             position: "absolute",
             top: "calc(100% + 6px)",
@@ -124,7 +158,12 @@ export default function SearchInput() {
             <button
               key={char.id}
               id={`suggestion-${char.id}`}
-              onClick={() => handleSelect(char)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelect(char);
+              }}
+              role="option"
+              aria-selected={selectedIndex === i}
               style={{
                 width: "100%",
                 display: "flex",
@@ -136,17 +175,24 @@ export default function SearchInput() {
                   i < suggestions.length - 1
                     ? "1px solid var(--border)"
                     : "none",
-                background: "transparent",
+                background: selectedIndex === i ? "rgba(193, 18, 31, 0.15)" : "transparent",
                 cursor: "pointer",
                 textAlign: "left",
                 transition: "background 0.15s",
               }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLButtonElement).style.background = "transparent")
-              }
+              onMouseEnter={(e) => {
+                setSelectedIndex(i);
+                if (selectedIndex !== i) {
+                  (e.currentTarget as HTMLButtonElement).style.background = "rgba(193, 18, 31, 0.15)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedIndex === i) {
+                  (e.currentTarget as HTMLButtonElement).style.background = "rgba(193, 18, 31, 0.15)";
+                } else {
+                  (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                }
+              }}
             >
               {/* Name */}
               <span

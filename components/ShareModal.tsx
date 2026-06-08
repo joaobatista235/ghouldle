@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useGameStore } from "@/store/gameStore";
 import { buildShareText } from "@/lib/game";
 
@@ -10,13 +10,26 @@ export default function ShareModal() {
   const daily       = useGameStore((s) => s.daily);
   const setShowShare = useGameStore((s) => s.setShowShare);
   const [copied, setCopied]   = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Guard: don't render if daily is null
+  if (!daily) return null;
 
   const text = buildShareText(guesses, won);
 
   function handleCopy() {
+    // Clear previous timeout to prevent race conditions
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     navigator.clipboard.writeText(text);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+
+    timeoutRef.current = setTimeout(() => {
+      setCopied(false);
+      timeoutRef.current = null;
+    }, 2500);
   }
 
   return (
@@ -53,7 +66,7 @@ export default function ShareModal() {
             className="font-display tracking-[0.15em] uppercase"
             style={{ fontSize: "1.8rem", color: "var(--text-primary)", marginBottom: "8px" }}
           >
-            {daily?.name}
+            {daily.name}
           </h2>
           <p style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "2px" }}>
             {guesses.length} tentativa{guesses.length !== 1 ? "s" : ""}

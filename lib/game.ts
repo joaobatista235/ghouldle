@@ -2,8 +2,13 @@ import { Character, GuessRow, GuessResult, Rating } from "@/types";
 
 const RATING_ORDER: Rating[] = ["—", "C", "B", "A", "S", "SS", "SSS"];
 
+// Utility function to get consistent UTC date string
+function getUtcDateString(date: Date = new Date()): string {
+  return date.toISOString().split("T")[0];
+}
+
 export function getDailyCharacter(characters: Character[]): Character {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getUtcDateString();
   let hash = 0;
   for (let i = 0; i < today.length; i++) {
     hash = (hash * 31 + today.charCodeAt(i)) & 0xffffffff;
@@ -74,7 +79,7 @@ const RESULT_EMOJI: Record<GuessResult, string> = {
 };
 
 export function buildShareText(guesses: GuessRow[], won: boolean): string {
-  const date = new Date().toLocaleDateString("pt-BR");
+  const date = getUtcDateString();
   const lines = guesses.map((g) => {
     const fields: GuessResult[] = [
       g.results.name,
